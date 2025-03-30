@@ -1,13 +1,15 @@
 package org.example.Course;
 
+import java.util.UUID;
+
 public class Course {
     String uuid;
     String name;
     final int maxNumberOfSeats = 50;
     final double cost = 600;
 
-    public Course(String uuid, String name) {
-        this.uuid = uuid;
+    public Course(String name) {
+        this.uuid = UUID.randomUUID().toString();
         this.name = name;
     }
 
