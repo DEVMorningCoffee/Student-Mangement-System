@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.Course.Course;
 import org.example.Student.Student;
 
 import java.util.ArrayList;
@@ -19,7 +20,8 @@ public class Main {
         String uuid;
 
         while(true){
-            String[] choices = {"1: Add Student","2: Get Student", "3: Update Student"};
+            String[] choices = {"1: Add Student","2: Get Student", "3: Update Student",
+            "4: Add Course"};
             for(String choice: choices){
                 System.out.println(choice);
             }
@@ -73,10 +75,46 @@ public class Main {
                     findStudent.get().setBalance(updateBalance);
                     findStudent.get().setAge(updateAge);
 
+                    System.out.println(findStudent);
+
                     break;
+
+                case 4:
+                    uuid = userInput("What's the uuid: ");
+                    findStudent = findUserChoice(uuid, students);
+                    if(findStudent.isEmpty()){
+                        break;
+                    }
+
+                    addCourse(findStudent.get());
+
+
             }
 
         }
+
+    }
+
+    public static void addCourse(Student student){
+        int i = 0;
+        // Create Different Course
+        Course mathCourse = new Course("Math");
+        Course scienceCourse = new Course("Science");
+        Course englishCourse = new Course("English");
+        Course gymCourse = new Course("Gym");
+
+        Course[] courses = {mathCourse, scienceCourse, englishCourse, gymCourse};
+
+
+        for(Course course: courses){
+            System.out.println(i + ". " + course.getName());
+            i++;
+        }
+
+        int courseChoice = Integer.parseInt(userInput("Please enter your choice: "));
+
+
+        student.addCourse(courses[courseChoice]);
 
     }
 
