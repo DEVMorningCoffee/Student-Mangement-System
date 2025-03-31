@@ -5,12 +5,24 @@ import java.util.UUID;
 public class Course {
     String uuid;
     String name;
+    String teacher;
+    String subject;
     final int maxNumberOfSeats = 50;
     final double cost = 600;
 
-    public Course(String name) {
+    /*A class must have a name and subject. A class can not have a teacher. */
+
+    public Course(String name, String subject) {
         this.uuid = UUID.randomUUID().toString();
         this.name = name;
+        this.subject = subject;
+    }
+
+    public Course(String name, String teacher, String subject) {
+        this.uuid = UUID.randomUUID().toString();
+        this.name = name;
+        this.teacher = teacher;
+        this.subject = subject;
     }
 
     public String getUuid() {
@@ -35,6 +47,22 @@ public class Course {
 
     public double getCost() {
         return cost;
+    }
+
+    public String getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(String teacher) {
+        this.teacher = teacher;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
     @Override
