@@ -41,6 +41,21 @@ public class PostgresSQL {
 
     }
 
+    public void addCourse(Course course){
+        try{
+        String addCourseSQL = String.format("INSERT INTO courses (UUID, Name, Teacher, Subject, MaxNumberofSeats, Cost) " +
+                        "VALUES ('%s', '%s', '%s', '%s', '%d', '%.2f');",
+                course.getUuid(), course.getName(), course.getTeacher(), course.getSubject(), course.getMaxNumberOfSeats(), course.getCost());
+
+        stmt.execute(addCourseSQL);
+
+        System.out.println("Course added");
+
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
+
     public void closeConnection(){
         try{
             conn.close();
