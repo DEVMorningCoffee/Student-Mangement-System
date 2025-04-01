@@ -11,14 +11,14 @@ public class CourseService {
 
     Connection connection;
 
-    public CourseService(Connection conn) {
-        this.connection = conn;
+    public CourseService(Connection connection) {
+        this.connection = connection;
     }
 
     public void createCoursesTable() {
         String createCourseTableSQL = """
         CREATE TABLE IF NOT EXISTS Courses (
-            UUID UUID NOT NULL PRIMARY KEY, 
+            ID UUID NOT NULL PRIMARY KEY, 
             Name VARCHAR(255) NOT NULL, 
             Teacher VARCHAR(255), 
             Subject VARCHAR(255) NOT NULL, 
@@ -41,14 +41,14 @@ public class CourseService {
 
     public void addCourseToTable(Course course) throws SQLException{
         String addCourseToTableSQL = """
-                INSERT INTO Courses (UUID, NAME, Teacher, Subject, MaxNumberOfSeats, Cost)
+                INSERT INTO Courses (ID, NAME, Teacher, Subject, MaxNumberOfSeats, Cost)
                 VALUES (?, ?, ?, ?, ?, ?)
                 """;
 
         try(Connection conn = PostgresSQLDatabase.createConnection();
             PreparedStatement stmt = conn.prepareStatement(addCourseToTableSQL)){
 
-            stmt.setObject(1, course.getUuid(), java.sql.Types.OTHER);
+            stmt.setObject(1, course.getId(), java.sql.Types.OTHER);
             stmt.setString(2, course.getName());
             stmt.setString(3, course.getTeacher());
             stmt.setString(4, course.getSubject());

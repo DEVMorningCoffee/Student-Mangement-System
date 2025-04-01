@@ -3,7 +3,7 @@ package org.example.Course;
 import java.util.UUID;
 
 public class Course {
-    String uuid;
+    String id;
     String name;
     String teacher;
     String subject;
@@ -13,25 +13,25 @@ public class Course {
     /*A class must have a name and subject. A class can not have a teacher. */
 
     public Course(String name, String subject) {
-        this.uuid = UUID.randomUUID().toString();
+        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.subject = subject;
     }
 
     public Course(String name,String subject, String teacher) {
-        this.uuid = UUID.randomUUID().toString();
+        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.teacher = teacher;
         this.subject = subject;
     }
 
 
-    public String getUuid() {
-        return uuid;
+    public String getId() {
+        return id;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -69,7 +69,7 @@ public class Course {
     @Override
     public String toString() {
         return "Course{" +
-                "uuid='" + uuid + '\'' +
+                "uuid='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", maxNumberOfSeats=" + maxNumberOfSeats +
                 ", cost=" + cost +
