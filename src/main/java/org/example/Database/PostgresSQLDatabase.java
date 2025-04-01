@@ -1,67 +1,58 @@
 package org.example.Database;
 
-import org.example.Course.Course;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.*;
+import java.util.Properties;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+public class PostgresSQLDatabase {
 
-public class PostgresSQL {
+    private static String URL;
+    private static String USER;
+    private static String PASSWORD;
+    private static String DRIVER;
 
-    private Connection conn;
-    private Statement stmt;
-
-    public void createConnection() throws SQLException{
+    static {
         try{
+            InputStream dbProperties = PostgresSQLDatabase.class.getClassLoader().getResourceAsStream("database.properties");
 
-            String url = "jdbc:postgresql://localhost:5432/Student Management System";
-            String user = "postgres";
-            String password = "2001";
+            if(dbProperties == null){
+                throw new RuntimeException("Unable to load database properties file");
+            }
+            Properties properties = new Properties();
+            properties.load(dbProperties);
 
-             conn = DriverManager.getConnection(url, user, password);
+            URL = properties.getProperty("db.url");
+            USER = properties.getProperty("db.user");
+            PASSWORD = properties.getProperty("db.password");
+            DRIVER = properties.getProperty("db.driver");
 
-             stmt = conn.createStatement();
-        }catch(Exception e){
-            System.out.println(e.getMessage());
+            System.out.println(URL);
+
+            Class.forName(DRIVER);
+
+        }catch(IOException | ClassNotFoundException e){
+            throw new RuntimeException("Database initialization failed",e);
         }
     }
 
-    public void createCourseTable() {
-        try{
-            String createCourseTableSQL = "CREATE TABLE IF NOT EXISTS Courses(UUID UUID NOT NULL  PRIMARY KEY, Name VARCHAR(255) NOT NULL, " +
-                    "Teacher VARCHAR(255), Subject VARCHAR(255) NOT NULL, MaxNumberOfSeats INT NOT NULL, Cost FLOAT NOT NULL)";
-
-            stmt.execute(createCourseTableSQL);
-
-            System.out.println("Course table created");
-        }catch(SQLException e){
-            e.printStackTrace();
-        }
-
+    public static Connection createConnection() throws SQLException{
+        return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    public void addCourse(Course course){
-        try{
-        String addCourseSQL = String.format("INSERT INTO courses (UUID, Name, Teacher, Subject, MaxNumberofSeats, Cost) " +
-                        "VALUES ('%s', '%s', '%s', '%s', '%d', '%.2f');",
-                course.getUuid(), course.getName(), course.getTeacher(), course.getSubject(), course.getMaxNumberOfSeats(), course.getCost());
+    public Connection getConnection() throws SQLException{
+        return DriverManager.getConnection(URL, USER, PASSWORD);
+    }
 
-        stmt.execute(addCourseSQL);
-
-        System.out.println("Course added");
-
-        }catch(SQLException e){
-            e.printStackTrace();
+    public static void close(Connection conn) {
+        try {
+            if (conn != null) conn.close();
+        } catch (SQLException e) {
+            throw new RuntimeException("Database couldn't close properly.", e);
         }
     }
 
-    public void closeConnection(){
-        try{
-            conn.close();
-            stmt.close();
-        }catch(SQLException e){
-            e.printStackTrace();
-        }
-    }
+
+
+
 }
