@@ -12,7 +12,7 @@ public class PostgresSQL {
     private Connection conn;
     private Statement stmt;
 
-    public void createConnection(){
+    public void createConnection() throws SQLException{
         try{
 
             String url = "jdbc:postgresql://localhost:5432/Student Management System";
