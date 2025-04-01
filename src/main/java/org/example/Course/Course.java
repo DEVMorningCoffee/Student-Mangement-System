@@ -18,12 +18,13 @@ public class Course {
         this.subject = subject;
     }
 
-    public Course(String name, String teacher, String subject) {
+    public Course(String name,String subject, String teacher) {
         this.uuid = UUID.randomUUID().toString();
         this.name = name;
         this.teacher = teacher;
         this.subject = subject;
     }
+
 
     public String getUuid() {
         return uuid;
