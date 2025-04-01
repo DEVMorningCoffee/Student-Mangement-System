@@ -4,12 +4,14 @@ import org.example.Course.Course;
 import org.example.Course.CourseService;
 import org.example.Database.PostgresSQLDatabase;
 import org.example.Student.Student;
+import org.example.Student.StudentService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.UUID;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
@@ -21,22 +23,22 @@ public class Main {
         Course history_course = new Course("Ancient Civilization", "History", "Rowan Zimmerman");
         Course english_course = new Course("Reading & Research", "English", "Layla Stephenson");
 
+        Student student = new Student("Jeffrey", "Abraham", 21, 600.29,
+                UUID.fromString(english_course.getId()));
+
         try{
             PostgresSQLDatabase.createConnection();
 
             Connection db = new PostgresSQLDatabase().getConnection();
 
             CourseService courseService = new CourseService(db);
+            StudentService studentService = new StudentService(db);
 
-            // Create the Course Table
+            // Create the Courses Table
             courseService.createCoursesTable();
 
-
-            // Adding the Course to the table
-            courseService.addCourseToTable(math_course);
-            courseService.addCourseToTable(science_course);
-            courseService.addCourseToTable(history_course);
-            courseService.addCourseToTable(english_course);
+            // Create the Students table
+            studentService.createStudentsTable();
 
             PostgresSQLDatabase.close(db);
 
@@ -47,7 +49,7 @@ public class Main {
     }
 
     public static Optional<Student> findUserChoice(String uuid, ArrayList<Student> students){
-        Optional<Student> optionalStudent = students.stream().filter(s -> s.getUuid().equals(uuid)).findFirst();
+        Optional<Student> optionalStudent = students.stream().filter(s -> s.getId().equals(uuid)).findFirst();
 
         if(optionalStudent.isPresent()){
             return optionalStudent;

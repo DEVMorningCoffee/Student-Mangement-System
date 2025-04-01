@@ -51,8 +51,4 @@ public class PostgresSQLDatabase {
             throw new RuntimeException("Database couldn't close properly.", e);
         }
     }
-
-
-
-
 }
