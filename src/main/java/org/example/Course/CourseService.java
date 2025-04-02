@@ -2,10 +2,8 @@ package org.example.Course;
 
 import org.example.Database.PostgresSQLDatabase;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.UUID;
 
 public class CourseService {
 
@@ -31,6 +29,8 @@ public class CourseService {
 
             stmt.execute(createCourseTableSQL);
 
+            stmt.close();
+
             System.out.println("Course table created successfully");
         }catch(SQLException e){
             throw new RuntimeException("Course table creation failed",e);
@@ -54,10 +54,42 @@ public class CourseService {
             stmt.setDouble(6, course.getCost());
             stmt.executeUpdate();
 
+            stmt.close();
+
             System.out.println("Course added");
 
         }catch(SQLException e){
             throw new RuntimeException("Course adding failed",e);
         }
+    }
+
+    public Course getCourseFromTable(String id) throws SQLException{
+        String getCourseFromTableSQL = """
+                SELECT * FROM COURSES WHERE ID = ?
+                """;
+
+        try(PreparedStatement stmt = connection.prepareStatement(getCourseFromTableSQL)){
+            stmt.setObject(1, UUID.fromString(id));
+
+            ResultSet rs = stmt.executeQuery();
+
+            Course course = new Course();
+
+            while(rs.next()){
+                course.setId(rs.getString("Id"));
+                course.setName(rs.getString("Name"));
+                course.setTeacher(rs.getString("Teacher"));
+            }
+
+            rs.close();
+            stmt.close();
+
+            System.out.println("Course retrieved" + course);
+
+            return course;
+        }catch(SQLException e){
+            throw new RuntimeException("Error retrieving course from table", e);
+        }
+
     }
 }

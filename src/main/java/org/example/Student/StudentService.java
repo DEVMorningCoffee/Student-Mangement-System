@@ -25,6 +25,8 @@ public class StudentService {
         try(Statement stmt = connection.createStatement()) {
             stmt.executeUpdate(createStudentsTableSQL);
 
+            stmt.close();
+
             System.out.println("Student table created");
         }catch(SQLException e) {
             throw new RuntimeException("Error creating student table", e);
@@ -51,6 +53,8 @@ public class StudentService {
             stmt.setObject(6, coursesArray, java.sql.Types.ARRAY);
 
             stmt.executeUpdate();
+
+            stmt.close();
 
             System.out.println("Student table added");
 
@@ -87,6 +91,8 @@ public class StudentService {
             }
 
             rs.close();
+
+            stmt.close();
 
             System.out.println("Student Retrieve");
 

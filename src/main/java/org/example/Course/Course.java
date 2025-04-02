@@ -25,6 +25,8 @@ public class Course {
         this.subject = subject;
     }
 
+    public Course(){};
+
 
     public String getId() {
         return id;
