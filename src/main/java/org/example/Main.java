@@ -50,6 +50,9 @@ public class Main {
             // Add Student to Students Table
             studentService.addStudentToTable(student);
 
+            // Retrive Student from Table
+            System.out.println(studentService.getStudentFromTable("e3a1a3f2-70ea-45bf-837b-0699059be7c8"));
+
             PostgresSQLDatabase.close(db);
 
         }catch(SQLException e){

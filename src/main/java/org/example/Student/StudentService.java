@@ -1,10 +1,7 @@
 package org.example.Student;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.UUID;
+import java.sql.*;
+import java.util.*;
 
 public class StudentService {
     Connection connection;
@@ -50,9 +47,7 @@ public class StudentService {
 
             // Convert Java ArrayList to Array
             // SQL cannot cast java.util.ArrayList to Types.Array
-
             UUID[] coursesArray = student.getCourses().toArray(new UUID[0]);
-
             stmt.setObject(6, coursesArray, java.sql.Types.ARRAY);
 
             stmt.executeUpdate();
@@ -61,6 +56,45 @@ public class StudentService {
 
         }catch(SQLException e) {
                 throw new RuntimeException("Student adding failed", e);
+        }
+    }
+
+    public Student getStudentFromTable(String studentID) throws SQLException {
+        String getStudentFromTableSQL = """
+                SELECT * FROM STUDENTS 
+                WHERE ID = ?
+                """;
+
+        try(PreparedStatement stmt = connection.prepareStatement(getStudentFromTableSQL)) {
+            stmt.setObject(1, UUID.fromString(studentID), java.sql.Types.OTHER);
+
+            ResultSet rs = stmt.executeQuery();
+
+            Student student = new Student();
+
+            while(rs.next()) {
+                student.setId(rs.getString(1));
+                student.setFirstName(rs.getString(2));
+                student.setLastName(rs.getString(3));
+                student.setAge(rs.getInt(4));
+                student.setBalance(rs.getFloat(5));
+
+                Array coursesIDsArray = rs.getArray(6);
+                UUID[] courseIDs = (UUID[]) coursesIDsArray.getArray();
+                ArrayList<UUID> courses = new ArrayList<>(Arrays.asList(courseIDs));
+                student.setCourses(courses);
+
+            }
+
+            rs.close();
+
+            System.out.println("Student Retrieve");
+
+            return student;
+
+
+        }catch (SQLException e) {
+            throw new RuntimeException("Error getting student from table", e);
         }
     }
 

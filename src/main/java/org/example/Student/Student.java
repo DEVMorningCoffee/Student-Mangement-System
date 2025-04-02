@@ -54,6 +54,8 @@ public class Student {
         return id;
     }
 
+    public void setId(String id) {this.id = id;}
+
     public String getFirstName() {
         return firstName;
     }
@@ -108,6 +110,11 @@ public class Student {
         return "Successfully remove: " + courseID;
     }
 
+    public void setCourses(ArrayList<UUID> courseIDs) {
+        courses = courseIDs;
+    }
+
+
     @Override
     public String toString() {
         return "Student{" +
@@ -119,4 +126,5 @@ public class Student {
                 ", courses=" + courses +
                 '}';
     }
+
 }
