@@ -23,8 +23,15 @@ public class Main {
         Course history_course = new Course("Ancient Civilization", "History", "Rowan Zimmerman");
         Course english_course = new Course("Reading & Research", "English", "Layla Stephenson");
 
+        ArrayList<UUID> courses = new ArrayList<>();
+        courses.add(math_course.getIDFromUUID());
+        courses.add(science_course.getIDFromUUID());
+        courses.add(history_course.getIDFromUUID());
+        courses.add(english_course.getIDFromUUID());
+
+
         Student student = new Student("Jeffrey", "Abraham", 21, 600.29,
-                UUID.fromString(english_course.getId()));
+                courses);
 
         try{
             PostgresSQLDatabase.createConnection();
@@ -39,6 +46,9 @@ public class Main {
 
             // Create the Students table
             studentService.createStudentsTable();
+
+            // Add Student to Students Table
+            studentService.addStudentToTable(student);
 
             PostgresSQLDatabase.close(db);
 
