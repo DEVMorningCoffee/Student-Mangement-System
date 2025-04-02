@@ -27,8 +27,7 @@ public class CourseService {
         )
     """;
 
-        try(Connection conn = PostgresSQLDatabase.createConnection();
-            Statement stmt = conn.createStatement()){
+        try(Statement stmt = connection.createStatement()){
 
             stmt.execute(createCourseTableSQL);
 
@@ -45,8 +44,7 @@ public class CourseService {
                 VALUES (?, ?, ?, ?, ?, ?)
                 """;
 
-        try(Connection conn = PostgresSQLDatabase.createConnection();
-            PreparedStatement stmt = conn.prepareStatement(addCourseToTableSQL)){
+        try(PreparedStatement stmt = connection.prepareStatement(addCourseToTableSQL)){
 
             stmt.setObject(1, course.getId(), java.sql.Types.OTHER);
             stmt.setString(2, course.getName());
