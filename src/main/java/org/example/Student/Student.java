@@ -92,6 +92,16 @@ public class Student {
         return "Successfully added: " + courseID;
     }
 
+    public String addCourses(ArrayList<UUID> courseIDs){
+        courses = courseIDs;
+
+        return "Successfully added: " + courseIDs;
+    }
+
+    public ArrayList<UUID> getCourses() {
+        return courses;
+    }
+
     public String removeCourse(UUID courseID){
         courses.remove(courseID);
 
