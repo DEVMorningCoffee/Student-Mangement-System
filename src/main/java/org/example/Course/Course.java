@@ -30,6 +30,10 @@ public class Course {
         return id;
     }
 
+    public UUID getIDFromUUID(){
+        return UUID.fromString(id);
+    }
+
     public void setId(String id) {
         this.id = id;
     }
