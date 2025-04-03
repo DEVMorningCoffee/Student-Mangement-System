@@ -84,7 +84,7 @@ public class CourseService {
             rs.close();
             stmt.close();
 
-            System.out.println("Course retrieved" + course);
+            System.out.println("Course retrieved");
 
             return course;
         }catch(SQLException e){

@@ -51,7 +51,14 @@ public class Main {
             studentService.addStudentToTable(student);
 
             // Retrive Student from Table
-            System.out.println(studentService.getStudentFromTable("e3a1a3f2-70ea-45bf-837b-0699059be7c8"));
+            Student getStudent = studentService.getStudentFromTable("e3a1a3f2-70ea-45bf-837b-0699059be7c8");
+
+            // Retrive Courses from Table
+            Course getCourse = courseService.getCourseFromTable("2a7829af-cc9d-4fe2-bafc-a13db6dc8c11");
+
+            getStudent.addCourse(UUID.fromString(getCourse.getId()));
+
+            studentService.updateStudentFromTable(getStudent);
 
             PostgresSQLDatabase.close(db);
 

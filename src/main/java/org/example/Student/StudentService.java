@@ -104,4 +104,40 @@ public class StudentService {
         }
     }
 
+    public void updateStudentFromTable(Student updateStudent) throws SQLException {
+        String updateStudentFromTableSQL = """
+                UPDATE students
+                SET firstname = ?,
+                    lastname = ?,
+                    age = ?,
+                    balance = ?,
+                    courses = ?
+                WHERE id = ?;
+                """;
+
+        try(PreparedStatement stmt = connection.prepareStatement(updateStudentFromTableSQL)) {
+
+            // Get ID of what student to update
+            stmt.setObject(6, UUID.fromString(updateStudent.getId()), java.sql.Types.OTHER);
+
+            stmt.setString(1, updateStudent.getFirstName());
+            stmt.setString(2, updateStudent.getLastName());
+            stmt.setInt(3, updateStudent.getAge());
+            stmt.setDouble(4, updateStudent.getBalance());
+
+            // Convert Java ArrayList to Array
+            // SQL cannot cast java.util.ArrayList to Types.Array
+            UUID[] coursesArray = updateStudent.getCourses().toArray(new UUID[0]);
+            stmt.setObject(5, coursesArray, java.sql.Types.ARRAY);
+
+            stmt.executeUpdate();
+            stmt.close();
+
+            System.out.println("Student table updated");
+
+        }catch (SQLException e){
+            throw new RuntimeException("Updating student failed", e);
+        }
+    }
+
 }
