@@ -58,7 +58,7 @@ public class Main {
 
             getStudent.addCourse(UUID.fromString(getCourse.getId()));
 
-            studentService.updateStudentFromTable(getStudent.getId());
+            studentService.updateStudentFromTable(getStudent);
 
             PostgresSQLDatabase.close(db);
 

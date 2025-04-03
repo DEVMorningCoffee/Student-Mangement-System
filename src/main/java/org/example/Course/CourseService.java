@@ -92,4 +92,32 @@ public class CourseService {
         }
 
     }
+
+    public void updateCourseFromTable(Course course) throws SQLException{
+        String updateCourseFromTableSQL = """
+                UPDATE COURSES SET NAME=?,
+                		TEACHER=?, SUBJECT=?,
+                		MAXNUMBEROFSEATS=?,
+                		COST=?
+                		WHERE ID=?;
+                """;
+
+        try(PreparedStatement stmt = connection.prepareStatement(updateCourseFromTableSQL)){
+            stmt.setObject(6, UUID.fromString(course.getId()), java.sql.Types.OTHER);
+
+            stmt.setString(1, course.getName());
+            stmt.setString(2, course.getTeacher());
+            stmt.setString(3, course.getSubject());
+            stmt.setInt(4, course.getMaxNumberOfSeats());
+            stmt.setDouble(5, course.getCost());
+
+            stmt.executeUpdate();
+
+            stmt.close();
+
+            System.out.println("Course updated");
+        }catch(SQLException e){
+            throw new RuntimeException("Course update failed", e);
+        }
+    }
 }

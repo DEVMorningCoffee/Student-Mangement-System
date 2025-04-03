@@ -91,7 +91,6 @@ public class StudentService {
             }
 
             rs.close();
-
             stmt.close();
 
             System.out.println("Student Retrieve");
@@ -104,7 +103,7 @@ public class StudentService {
         }
     }
 
-    public void updateStudentFromTable(String id) throws SQLException {
+    public void updateStudentFromTable(Student student) throws SQLException {
         String updateStudentFromTableSQL = """
                 UPDATE students
                 SET firstname = ?,
@@ -116,9 +115,6 @@ public class StudentService {
                 """;
 
         try(PreparedStatement stmt = connection.prepareStatement(updateStudentFromTableSQL)) {
-
-            Student student = getStudentFromTable(id);
-
             // Get ID of what student to update
             stmt.setObject(6, UUID.fromString(student.getId()), Types.OTHER);
 
