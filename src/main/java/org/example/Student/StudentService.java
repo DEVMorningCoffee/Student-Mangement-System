@@ -104,7 +104,7 @@ public class StudentService {
         }
     }
 
-    public void updateStudentFromTable(Student updateStudent) throws SQLException {
+    public void updateStudentFromTable(String id) throws SQLException {
         String updateStudentFromTableSQL = """
                 UPDATE students
                 SET firstname = ?,
@@ -117,18 +117,20 @@ public class StudentService {
 
         try(PreparedStatement stmt = connection.prepareStatement(updateStudentFromTableSQL)) {
 
-            // Get ID of what student to update
-            stmt.setObject(6, UUID.fromString(updateStudent.getId()), java.sql.Types.OTHER);
+            Student student = getStudentFromTable(id);
 
-            stmt.setString(1, updateStudent.getFirstName());
-            stmt.setString(2, updateStudent.getLastName());
-            stmt.setInt(3, updateStudent.getAge());
-            stmt.setDouble(4, updateStudent.getBalance());
+            // Get ID of what student to update
+            stmt.setObject(6, UUID.fromString(student.getId()), Types.OTHER);
+
+            stmt.setString(1, student.getFirstName());
+            stmt.setString(2, student.getLastName());
+            stmt.setInt(3, student.getAge());
+            stmt.setDouble(4, student.getBalance());
 
             // Convert Java ArrayList to Array
             // SQL cannot cast java.util.ArrayList to Types.Array
-            UUID[] coursesArray = updateStudent.getCourses().toArray(new UUID[0]);
-            stmt.setObject(5, coursesArray, java.sql.Types.ARRAY);
+            UUID[] coursesArray = student.getCourses().toArray(new UUID[0]);
+            stmt.setObject(5, coursesArray, Types.ARRAY);
 
             stmt.executeUpdate();
             stmt.close();
@@ -137,6 +139,29 @@ public class StudentService {
 
         }catch (SQLException e){
             throw new RuntimeException("Updating student failed", e);
+        }
+    }
+
+    public Student removeStudentFromTable(String id) throws SQLException {
+        String removeStudentFromTableSQL = """
+                    DELETE FROM STUDENTS WHERE ID = ?;
+                """;
+
+        try(PreparedStatement stmt = connection.prepareStatement(removeStudentFromTableSQL)) {
+
+            Student student = getStudentFromTable(id);
+
+            stmt.setObject(1, UUID.fromString(student.getId()), java.sql.Types.OTHER);
+
+            stmt.executeUpdate();
+            stmt.close();
+
+            System.out.println("Student table removed");
+
+            return student;
+
+        }catch(SQLException e){
+            throw new RuntimeException("Removing student failed", e);
         }
     }
 
