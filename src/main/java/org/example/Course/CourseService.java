@@ -3,6 +3,7 @@ package org.example.Course;
 import org.example.Database.PostgresSQLDatabase;
 
 import java.sql.*;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class CourseService {
@@ -118,6 +119,41 @@ public class CourseService {
             System.out.println("Course updated");
         }catch(SQLException e){
             throw new RuntimeException("Course update failed", e);
+        }
+    }
+
+    public void removeCourseFromTable(String id) throws SQLException {
+        String deleteCourseFromTableSQL = """
+            DELETE FROM COURSES WHERE ID = ?
+            """;
+        String deleteCourseFromStudentTableSQL = """
+            UPDATE students
+            SET courses = array_remove(courses, ?)
+            WHERE courses @> ?::UUID[];
+            """;
+
+        try (PreparedStatement stmt = connection.prepareStatement(deleteCourseFromTableSQL);
+             PreparedStatement stmt2 = connection.prepareStatement(deleteCourseFromStudentTableSQL)) {
+
+            Course course = getCourseFromTable(id);
+
+            // First, update students to remove the course from their courses array
+            stmt2.setObject(1, course.getId(), java.sql.Types.OTHER);
+
+            // Create a SQL Array for UUID[]
+            Array uuidArray = connection.createArrayOf("UUID", new UUID[]{course.getIDFromUUID()});
+            stmt2.setArray(2, uuidArray);
+
+            stmt2.executeUpdate();
+            stmt2.close();
+
+            stmt.setObject(1, course.getId(), java.sql.Types.OTHER);
+            stmt.executeUpdate();
+            stmt.close();
+
+            System.out.println("Course deleted");
+        } catch (SQLException e) {
+            throw new RuntimeException("Course delete failed", e);
         }
     }
 }

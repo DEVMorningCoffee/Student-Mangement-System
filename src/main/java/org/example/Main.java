@@ -44,6 +44,11 @@ public class Main {
             // Create the Courses Table
             courseService.createCoursesTable();
 
+            courseService.addCourseToTable(english_course);
+            courseService.addCourseToTable(science_course);
+            courseService.addCourseToTable(math_course);
+            courseService.addCourseToTable(history_course);
+
             // Create the Students table
             studentService.createStudentsTable();
 
@@ -56,11 +61,7 @@ public class Main {
             // Retrive Courses from Table
             Course getCourse = courseService.getCourseFromTable("2a7829af-cc9d-4fe2-bafc-a13db6dc8c11");
 
-            getStudent.addCourse(UUID.fromString(getCourse.getId()));
-
-            studentService.updateStudentFromTable(getStudent);
-
-            PostgresSQLDatabase.close(db);
+            courseService.removeCourseFromTable("9f59d92e-e4b1-42b3-b00b-35afc35a77e9");
 
         }catch(SQLException e){
             e.printStackTrace();
