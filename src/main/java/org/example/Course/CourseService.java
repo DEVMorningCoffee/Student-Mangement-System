@@ -1,9 +1,10 @@
 package org.example.Course;
 
 import org.example.Database.PostgresSQLDatabase;
+import org.example.Student.Student;
 
 import java.sql.*;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class CourseService {
@@ -156,4 +157,8 @@ public class CourseService {
             throw new RuntimeException("Course delete failed", e);
         }
     }
+
+//    public ArrayList<Student> getAllStudentsFromCourse(String id) throws SQLException {
+//
+//    }
 }
