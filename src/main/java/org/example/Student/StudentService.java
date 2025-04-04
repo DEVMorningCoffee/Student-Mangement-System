@@ -1,6 +1,7 @@
 package org.example.Student;
 
 import org.example.Course.Course;
+import org.example.Course.CourseService;
 import org.example.Enrollment.EnrollmentService;
 
 import java.sql.*;
@@ -54,6 +55,13 @@ public class StudentService {
             // SQL cannot cast java.util.ArrayList to Types.Array
             UUID[] coursesArray = student.getCourses().toArray(new UUID[0]);
             stmt.setObject(6, coursesArray, java.sql.Types.ARRAY);
+
+            for(UUID course : coursesArray) {
+                EnrollmentService enrollmentService = new EnrollmentService(connection);
+                CourseService courseService = new CourseService(connection);
+
+                enrollmentService.addEnrollmentToTable(student, courseService.getCourseFromTable(course.toString()));
+            }
 
             stmt.executeUpdate();
 
