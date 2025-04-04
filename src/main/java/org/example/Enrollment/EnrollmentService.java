@@ -1,7 +1,9 @@
 package org.example.Enrollment;
 
 import org.example.Course.Course;
+import org.example.Course.CourseService;
 import org.example.Student.Student;
+import org.example.Student.StudentService;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -50,6 +52,28 @@ public class EnrollmentService {
             System.out.println("Enrollment table added");
         }catch (SQLException e){
             throw new RuntimeException("Couldn't add Enrollment to table", e);
+        }
+    }
+
+    public void removeEnrollmentFromTable(Student student, Course course) throws SQLException {
+        String removeEnrollmentFromTableSQL = """
+                DELETE FROM ENROLLMENTS WHERE STUDENT_ID = ? AND COURSE_ID = ?;
+                """;
+
+        try(PreparedStatement stmt = connection.prepareStatement(removeEnrollmentFromTableSQL)){
+            stmt.setObject(1, UUID.fromString(student.getId()), java.sql.Types.OTHER);
+            stmt.setObject(2, UUID.fromString(course.getId()), java.sql.Types.OTHER);
+
+            // Remove Course from Student
+            StudentService studentService = new StudentService(connection);
+            studentService.removeCourseFromStudentTable(course);
+
+            stmt.executeUpdate();
+            stmt.close();
+
+            System.out.println("Enrollment table removed");
+        }catch (SQLException e){
+            throw new RuntimeException("Couldn't remove Enrollment from table", e);
         }
     }
 }
