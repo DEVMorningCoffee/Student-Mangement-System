@@ -1,7 +1,9 @@
 package org.example.Course;
 
 import org.example.Database.PostgresSQLDatabase;
+import org.example.Enrollment.EnrollmentService;
 import org.example.Student.Student;
+import org.example.Student.StudentService;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -123,34 +125,24 @@ public class CourseService {
         }
     }
 
-    public void removeCourseFromTable(String id) throws SQLException {
-        String deleteCourseFromTableSQL = """
+    public void removeCourseFromTable(Course course, Student student) throws SQLException {
+        String removeCourseFromTableSQL = """
             DELETE FROM COURSES WHERE ID = ?
             """;
-        String deleteCourseFromStudentTableSQL = """
-            UPDATE students
-            SET courses = array_remove(courses, ?)
-            WHERE courses @> ?::UUID[];
-            """;
 
-        try (PreparedStatement stmt = connection.prepareStatement(deleteCourseFromTableSQL);
-             PreparedStatement stmt2 = connection.prepareStatement(deleteCourseFromStudentTableSQL)) {
-
-            Course course = getCourseFromTable(id);
-
-            // First, update students to remove the course from their courses array
-            stmt2.setObject(1, course.getId(), java.sql.Types.OTHER);
-
-            // Create a SQL Array for UUID[]
-            Array uuidArray = connection.createArrayOf("UUID", new UUID[]{course.getIDFromUUID()});
-            stmt2.setArray(2, uuidArray);
-
-            stmt2.executeUpdate();
-            stmt2.close();
+        try (PreparedStatement stmt = connection.prepareStatement(removeCourseFromTableSQL)) {
 
             stmt.setObject(1, course.getId(), java.sql.Types.OTHER);
             stmt.executeUpdate();
             stmt.close();
+
+            // Remove course from student
+            StudentService studentService = new StudentService(connection);
+            studentService.removeCourseFromStudentTable(course);
+
+            // Remove many to many connection
+            EnrollmentService enrollmentService = new EnrollmentService(connection);
+            enrollmentService.removeEnrollmentFromTable(student, course);
 
             System.out.println("Course deleted");
         } catch (SQLException e) {
