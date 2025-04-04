@@ -49,6 +49,8 @@ public class Main {
             // Create the Enrollment Table
             enrollmentService.createEnrollmentsTable();
 
+            enrollmentService.addEnrollmentToTable(student, math_course);
+
         }catch(SQLException e){
             e.printStackTrace();
         }

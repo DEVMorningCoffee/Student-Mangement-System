@@ -8,10 +8,4 @@ import java.util.UUID;
  */
 
 public class Enrollment {
-    String enrollmentId;
-
-    public Enrollment(Connection connection) {
-        this.enrollmentId = UUID.randomUUID().toString();
-    }
-
 }
