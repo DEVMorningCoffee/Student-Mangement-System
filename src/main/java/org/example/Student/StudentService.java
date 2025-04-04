@@ -1,6 +1,7 @@
 package org.example.Student;
 
 import org.example.Course.Course;
+import org.example.Enrollment.EnrollmentService;
 
 import java.sql.*;
 import java.util.*;
@@ -140,19 +141,22 @@ public class StudentService {
         }
     }
 
-    public Student removeStudentFromTable(String id) throws SQLException {
+    public Student removeStudentFromTable(Student student) throws SQLException {
         String removeStudentFromTableSQL = """
                     DELETE FROM STUDENTS WHERE ID = ?;
                 """;
 
         try(PreparedStatement stmt = connection.prepareStatement(removeStudentFromTableSQL)) {
 
-            Student student = getStudentFromTable(id);
 
             stmt.setObject(1, UUID.fromString(student.getId()), java.sql.Types.OTHER);
 
             stmt.executeUpdate();
             stmt.close();
+
+            // Remove many to many connection
+            EnrollmentService enrollmentService = new EnrollmentService(connection);
+            enrollmentService.removeEnrollmentFromTableDueToStudent(student);
 
             System.out.println("Student table removed");
 

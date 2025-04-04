@@ -76,4 +76,38 @@ public class EnrollmentService {
             throw new RuntimeException("Couldn't remove Enrollment from table", e);
         }
     }
+
+    public void removeEnrollmentFromTableDueToStudent(Student student) throws SQLException {
+        String removeEnrollmentFromTableSQL = """
+                DELETE FROM ENROLLMENTS WHERE STUDENT_ID = ?;
+                """;
+
+        try(PreparedStatement stmt = connection.prepareStatement(removeEnrollmentFromTableSQL)){
+            stmt.setObject(1, UUID.fromString(student.getId()), java.sql.Types.OTHER);
+
+            stmt.executeUpdate();
+            stmt.close();
+
+            System.out.println("Enrollment table removed");
+        }catch (SQLException e){
+            throw new RuntimeException("Couldn't remove Enrollment from table", e);
+        }
+    }
+
+    public void removeEnrollmentFromTableDueToCourse(Course course) throws SQLException {
+        String removeEnrollmentFromTableSQL = """
+                DELETE FROM ENROLLMENTS WHERE STUDENT_ID = ?;
+                """;
+
+        try(PreparedStatement stmt = connection.prepareStatement(removeEnrollmentFromTableSQL)){
+            stmt.setObject(1, UUID.fromString(course.getId()), java.sql.Types.OTHER);
+
+            stmt.executeUpdate();
+            stmt.close();
+
+            System.out.println("Enrollment table removed");
+        }catch (SQLException e){
+            throw new RuntimeException("Couldn't remove Enrollment from table", e);
+        }
+    }
 }

@@ -142,15 +142,11 @@ public class CourseService {
 
             // Remove many to many connection
             EnrollmentService enrollmentService = new EnrollmentService(connection);
-            enrollmentService.removeEnrollmentFromTable(student, course);
+            enrollmentService.removeEnrollmentFromTableDueToCourse(course);
 
             System.out.println("Course deleted");
         } catch (SQLException e) {
             throw new RuntimeException("Course delete failed", e);
         }
     }
-
-//    public ArrayList<Student> getAllStudentsFromCourse(String id) throws SQLException {
-//
-//    }
 }
