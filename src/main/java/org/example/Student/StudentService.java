@@ -1,5 +1,7 @@
 package org.example.Student;
 
+import org.example.Course.Course;
+
 import java.sql.*;
 import java.util.*;
 
@@ -158,6 +160,31 @@ public class StudentService {
 
         }catch(SQLException e){
             throw new RuntimeException("Removing student failed", e);
+        }
+    }
+
+    public void removeCourseFromStudentTable(Course course) throws SQLException {
+        String removeCourseFromStudentTableSQL = """
+            UPDATE students
+            SET courses = array_remove(courses, ?)
+            WHERE courses @> ?::UUID[];
+            """;
+
+        try(PreparedStatement stmt = connection.prepareStatement(removeCourseFromStudentTableSQL)){
+
+            // First, update students to remove the course from their courses array
+            stmt.setObject(1, course.getId(), java.sql.Types.OTHER);
+
+            // Create a SQL Array for UUID[]
+            Array uuidArray = connection.createArrayOf("UUID", new UUID[]{course.getIDFromUUID()});
+            stmt.setArray(2, uuidArray);
+
+            stmt.executeUpdate();
+
+            System.out.println("Course table removed");
+
+        }catch (SQLException e){
+            throw new RuntimeException("Course table failed to removed", e);
         }
     }
 
