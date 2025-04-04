@@ -5,10 +5,9 @@ import org.example.Course.CourseService;
 import org.example.Student.Student;
 import org.example.Student.StudentService;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 
@@ -24,8 +23,8 @@ public class EnrollmentService {
         String createEnrollmentTableSQL = """
                 CREATE TABLE IF NOT EXISTS ENROLLMENTS(
                 	ID SERIAL NOT NULL PRIMARY KEY,
-                	STUDENT_ID UUID NOT NULL,
-                	COURSE_ID UUID NOT NULL);
+                	STUDENTID UUID NOT NULL,
+                	COURSEID UUID NOT NULL);
                 
                 """;
 
@@ -39,7 +38,7 @@ public class EnrollmentService {
 
     public void addEnrollmentToTable(Student student, Course course) throws SQLException {
         String addEnrollmentToTableSQL = """
-                INSERT INTO ENROLLMENTS(STUDENT_ID, COURSE_ID) VALUES (?, ?);
+                INSERT INTO ENROLLMENTS(STUDENTID, COURSEID) VALUES (?, ?);
                 """;
 
         try(PreparedStatement stmt = connection.prepareStatement(addEnrollmentToTableSQL)){
@@ -55,9 +54,10 @@ public class EnrollmentService {
         }
     }
 
+
     public void removeEnrollmentFromTable(Student student, Course course) throws SQLException {
         String removeEnrollmentFromTableSQL = """
-                DELETE FROM ENROLLMENTS WHERE STUDENT_ID = ? AND COURSE_ID = ?;
+                DELETE FROM ENROLLMENTS WHERE STUDENTID = ? AND COURSEID = ?;
                 """;
 
         try(PreparedStatement stmt = connection.prepareStatement(removeEnrollmentFromTableSQL)){
@@ -77,9 +77,10 @@ public class EnrollmentService {
         }
     }
 
+    // Remove if student delete their account
     public void removeEnrollmentFromTableDueToStudent(Student student) throws SQLException {
         String removeEnrollmentFromTableSQL = """
-                DELETE FROM ENROLLMENTS WHERE STUDENT_ID = ?;
+                DELETE FROM ENROLLMENTS WHERE STUDENTID = ?;
                 """;
 
         try(PreparedStatement stmt = connection.prepareStatement(removeEnrollmentFromTableSQL)){
@@ -94,9 +95,10 @@ public class EnrollmentService {
         }
     }
 
+    // Remove if course is deleted
     public void removeEnrollmentFromTableDueToCourse(Course course) throws SQLException {
         String removeEnrollmentFromTableSQL = """
-                DELETE FROM ENROLLMENTS WHERE STUDENT_ID = ?;
+                DELETE FROM ENROLLMENTS WHERE COURSEID = ?;
                 """;
 
         try(PreparedStatement stmt = connection.prepareStatement(removeEnrollmentFromTableSQL)){
@@ -108,6 +110,37 @@ public class EnrollmentService {
             System.out.println("Enrollment table removed");
         }catch (SQLException e){
             throw new RuntimeException("Couldn't remove Enrollment from table", e);
+        }
+    }
+
+    public ArrayList<Student> getAllMatchingCourseFromEnrollmentTable(Course course) throws SQLException {
+        String getAllMatchingCourseFromEnrollmentTableSQl = """
+                SELECT * FROM ENROLLMENTS WHERE COURSEID = ?;
+                """;
+        try(PreparedStatement stmt = connection.prepareStatement(getAllMatchingCourseFromEnrollmentTableSQl)){
+            stmt.setObject(1, UUID.fromString(course.getId()), java.sql.Types.OTHER);
+
+            ResultSet rs = stmt.executeQuery();
+
+            ArrayList<Student> students = new ArrayList<>();
+
+            StudentService studentService = new StudentService(connection);
+
+            while(rs.next()){
+                Student student = studentService.getStudentFromTable(rs.getString("STUDENTID"));
+
+                students.add(student);
+            }
+
+            rs.close();
+            stmt.close();
+
+            System.out.println("Enrollment table found");
+
+            return students;
+
+        }catch (SQLException e){
+            throw new RuntimeException("Couldn't get all matching course", e);
         }
     }
 }

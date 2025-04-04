@@ -40,18 +40,25 @@ public class Main {
             StudentService studentService = new StudentService(db);
             EnrollmentService enrollmentService = new EnrollmentService(db);
 
-            // Create the Courses Table
+            // Create table
             courseService.createCoursesTable();
-
-            // Create the Students table
             studentService.createStudentsTable();
-
-            // Create the Enrollment Table
             enrollmentService.createEnrollmentsTable();
 
-            enrollmentService.addEnrollmentToTable(student, english_course);
+            // Add to update
+            courseService.addCourseToTable(english_course);
+            courseService.addCourseToTable(science_course);
+            courseService.addCourseToTable(history_course);
+            courseService.addCourseToTable(math_course);
 
-            enrollmentService.removeEnrollmentFromTable(student, english_course);
+            studentService.addStudentToTable(student);
+
+//            ArrayList<Student> allCourseStudent = courseService.getAllStudentFromCourse(english_course);
+//
+//
+//            for(Student s : allCourseStudent){
+//              System.out.println(s);
+//            }
 
         }catch(SQLException e){
             e.printStackTrace();

@@ -125,7 +125,7 @@ public class CourseService {
         }
     }
 
-    public void removeCourseFromTable(Course course, Student student) throws SQLException {
+    public void removeCourseFromTable(Course course) throws SQLException {
         String removeCourseFromTableSQL = """
             DELETE FROM COURSES WHERE ID = ?
             """;
@@ -147,6 +147,18 @@ public class CourseService {
             System.out.println("Course deleted");
         } catch (SQLException e) {
             throw new RuntimeException("Course delete failed", e);
+        }
+    }
+
+    public ArrayList<Student> getAllStudentFromCourse(Course course) throws SQLException{
+        try{
+            EnrollmentService enrollmentService = new EnrollmentService(connection);
+
+            System.out.println("All students retrieved");
+
+            return enrollmentService.getAllMatchingCourseFromEnrollmentTable(course);
+        }catch (SQLException e){
+            throw  new RuntimeException("All students retrieved failed", e);
         }
     }
 }
