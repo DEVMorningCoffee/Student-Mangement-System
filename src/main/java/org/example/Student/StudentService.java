@@ -203,7 +203,7 @@ public class StudentService {
         }
     }
 
-    public void addCoursetoStudentTable(Course course, Student student) throws SQLException {
+    public void addCourseToStudentTable(Course course, Student student) throws SQLException {
         String addCourseStudentTable = """
                 SELECT COUNT(*) FROM ENROLLMENTS WHERE COURSEID = ?;
                 """;
