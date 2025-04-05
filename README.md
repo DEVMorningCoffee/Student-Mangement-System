@@ -23,7 +23,6 @@ A Java-based backend application using JDBC and PostgreSQL that manages Students
 - **Java 17+**
 - **PostgreSQL**
 - **JDBC**
-- **Maven** (for dependency management, if applicable)
 
 ---
 
@@ -65,8 +64,8 @@ A Java-based backend application using JDBC and PostgreSQL that manages Students
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/student-enrollment-system.git
-cd student-enrollment-system
+git clone https://github.com/DEVMorningCoffee/Student-Mangement-System.git
+cd Student-Mangement-System
 ```
 
 ### 2. Set Up PostgreSQL
@@ -100,15 +99,18 @@ Ensure tables are created via `createStudentsTable()`, `createCoursesTable()`, a
 
 ```
 src/
-├── Course/
-│   └── Course.java
-│   └── CourseService.java
-├── Enrollment/
-│   └── EnrollmentService.java
-├── Student/
-│   └── Student.java
-│   └── StudentService.java
-└── Main.java
+|── Main/
+    |── java/
+    |── org.example
+        ├── Course/
+        │   └── Course.java
+        │   └── CourseService.java
+        ├── Enrollment/
+        │   └── EnrollmentService.java
+        ├── Student/
+        │   └── Student.java
+        │   └── StudentService.java
+        └── Main.java
 ```
 
 ---
