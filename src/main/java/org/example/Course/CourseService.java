@@ -1,6 +1,5 @@
 package org.example.Course;
 
-import org.example.Database.PostgresSQLDatabase;
 import org.example.Enrollment.EnrollmentService;
 import org.example.Student.Student;
 import org.example.Student.StudentService;
@@ -11,30 +10,33 @@ import java.util.UUID;
 
 public class CourseService {
 
-    Connection connection;
+    private final Connection connection;
+    private StudentService studentService;
+    private EnrollmentService enrollmentService;
 
     public CourseService(Connection connection) {
         this.connection = connection;
     }
 
+    public void setServices(StudentService studentService, EnrollmentService enrollmentService) {
+        this.studentService = studentService;
+        this.enrollmentService = enrollmentService;
+    }
+
     public void createCoursesTable() {
         String createCourseTableSQL = """
         CREATE TABLE IF NOT EXISTS Courses (
-            ID UUID NOT NULL PRIMARY KEY, 
-            Name VARCHAR(255) NOT NULL, 
-            Teacher VARCHAR(255), 
-            Subject VARCHAR(255) NOT NULL, 
-            MaxNumberOfSeats INT NOT NULL, 
+            ID UUID NOT NULL PRIMARY KEY,
+            Name VARCHAR(255) NOT NULL,
+            Teacher VARCHAR(255),
+            Subject VARCHAR(255) NOT NULL,
+            MaxNumberOfSeats INT NOT NULL,
             Cost DECIMAL(10,2) NOT NULL
         )
     """;
 
         try(Statement stmt = connection.createStatement()){
-
             stmt.execute(createCourseTableSQL);
-
-            stmt.close();
-
             System.out.println("Course table created successfully");
         }catch(SQLException e){
             throw new RuntimeException("Course table creation failed",e);
@@ -56,45 +58,37 @@ public class CourseService {
             stmt.setString(4, course.getSubject());
             stmt.setInt(5, course.getMaxNumberOfSeats());
             stmt.setDouble(6, course.getCost());
+
             stmt.executeUpdate();
-
-            stmt.close();
-
             System.out.println("Course added");
-
         }catch(SQLException e){
             throw new RuntimeException("Course adding failed",e);
         }
     }
 
-    public Course getCourseFromTable(String id) throws SQLException{
-        String getCourseFromTableSQL = """
-                SELECT * FROM COURSES WHERE ID = ?
-                """;
+    public Course getCourseFromTable(String id) throws SQLException {
+        String sql = "SELECT * FROM Courses WHERE ID = ?";
 
-        try(PreparedStatement stmt = connection.prepareStatement(getCourseFromTableSQL)){
-            stmt.setObject(1, UUID.fromString(id));
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setObject(1, UUID.fromString(id), java.sql.Types.OTHER);
 
-            ResultSet rs = stmt.executeQuery();
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Course course = new Course();
+                    course.setId(rs.getString("ID"));
+                    course.setName(rs.getString("Name"));
+                    course.setTeacher(rs.getString("Teacher"));
+                    course.setSubject(rs.getString("Subject"));
+                    course.setMaxNumberOfSeats(rs.getInt("MaxNumberOfSeats"));
+                    course.setCost(rs.getDouble("Cost"));
 
-            Course course = new Course();
-
-            while(rs.next()){
-                course.setId(rs.getString("Id"));
-                course.setName(rs.getString("Name"));
-                course.setTeacher(rs.getString("Teacher"));
+                    System.out.println("Retrieved course: " + course.getName());
+                    return course;
+                } else {
+                    throw new RuntimeException("Course with ID " + id + " not found.");
+                }
             }
-
-            rs.close();
-            stmt.close();
-
-            System.out.println("Course retrieved");
-
-            return course;
-        }catch(SQLException e){
-            throw new RuntimeException("Error retrieving course from table", e);
         }
-
     }
 
     public void updateCourseFromTable(Course course) throws SQLException{
@@ -126,39 +120,30 @@ public class CourseService {
     }
 
     public void removeCourseFromTable(Course course) throws SQLException {
-        String removeCourseFromTableSQL = """
-            DELETE FROM COURSES WHERE ID = ?
-            """;
+        String sql = "DELETE FROM Courses WHERE ID = ?";
 
-        try (PreparedStatement stmt = connection.prepareStatement(removeCourseFromTableSQL)) {
-
-            stmt.setObject(1, course.getId(), java.sql.Types.OTHER);
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setObject(1, UUID.fromString(course.getId()), java.sql.Types.OTHER);
             stmt.executeUpdate();
-            stmt.close();
 
-            // Remove course from student
-            StudentService studentService = new StudentService(connection);
+            enrollmentService.removeEnrollmentFromTableDueToCourse(course);
             studentService.removeCourseFromStudentTable(course);
 
-            // Remove many to many connection
-            EnrollmentService enrollmentService = new EnrollmentService(connection);
-            enrollmentService.removeEnrollmentFromTableDueToCourse(course);
-
-            System.out.println("Course deleted");
+            System.out.println("Course deleted: " + course.getName());
         } catch (SQLException e) {
-            throw new RuntimeException("Course delete failed", e);
+            throw new RuntimeException("Failed to delete course.", e);
         }
     }
 
-    public ArrayList<Student> getAllStudentFromCourse(Course course) throws SQLException{
-        try{
-            EnrollmentService enrollmentService = new EnrollmentService(connection);
+    public ArrayList<Student> getAllStudentFromCourse(Course course) throws SQLException {
+        try {
+            ArrayList<Student> students = enrollmentService.getAllMatchingCourseFromEnrollmentTable(course);
 
-            System.out.println("All students retrieved");
+            System.out.println("Found " + students.size() + " students enrolled in course: " + course.getName());
 
-            return enrollmentService.getAllMatchingCourseFromEnrollmentTable(course);
-        }catch (SQLException e){
-            throw  new RuntimeException("All students retrieved failed", e);
+            return students;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to retrieve students for course.", e);
         }
     }
 }

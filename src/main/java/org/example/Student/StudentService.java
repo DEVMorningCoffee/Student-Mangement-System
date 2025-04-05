@@ -8,10 +8,17 @@ import java.sql.*;
 import java.util.*;
 
 public class StudentService {
-    Connection connection;
+    private final Connection connection;
+    private EnrollmentService enrollmentService;
+    private CourseService courseService;
 
     public StudentService(Connection connection) {
         this.connection = connection;
+    }
+
+    public void setServices(EnrollmentService enrollmentService,CourseService courseService) {
+        this.enrollmentService = enrollmentService;
+        this.courseService = courseService;
     }
 
     public void createStudentsTable() throws SQLException {
@@ -57,9 +64,6 @@ public class StudentService {
             stmt.setObject(6, coursesArray, java.sql.Types.ARRAY);
 
             for(UUID course : coursesArray) {
-                EnrollmentService enrollmentService = new EnrollmentService(connection);
-                CourseService courseService = new CourseService(connection);
-
                 enrollmentService.addEnrollmentToTable(student, courseService.getCourseFromTable(course.toString()));
             }
 
@@ -76,9 +80,9 @@ public class StudentService {
 
     public Student getStudentFromTable(String studentID) throws SQLException {
         String getStudentFromTableSQL = """
-                SELECT * FROM STUDENTS 
+                SELECT * FROM STUDENTS\s
                 WHERE ID = ?
-                """;
+               \s""";
 
         try(PreparedStatement stmt = connection.prepareStatement(getStudentFromTableSQL)) {
             stmt.setObject(1, UUID.fromString(studentID), java.sql.Types.OTHER);
@@ -163,7 +167,6 @@ public class StudentService {
             stmt.close();
 
             // Remove many to many connection
-            EnrollmentService enrollmentService = new EnrollmentService(connection);
             enrollmentService.removeEnrollmentFromTableDueToStudent(student);
 
             System.out.println("Student table removed");

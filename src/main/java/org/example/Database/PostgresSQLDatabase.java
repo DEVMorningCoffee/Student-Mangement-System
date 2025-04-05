@@ -7,10 +7,9 @@ import java.util.Properties;
 
 public class PostgresSQLDatabase {
 
-    private static String URL;
-    private static String USER;
-    private static String PASSWORD;
-    private static String DRIVER;
+    private static final String URL;
+    private static final String USER;
+    private static final String PASSWORD;
 
     static {
         try{
@@ -25,7 +24,7 @@ public class PostgresSQLDatabase {
             URL = properties.getProperty("db.url");
             USER = properties.getProperty("db.user");
             PASSWORD = properties.getProperty("db.password");
-            DRIVER = properties.getProperty("db.driver");
+            String DRIVER = properties.getProperty("db.driver");
 
             System.out.println(URL);
 

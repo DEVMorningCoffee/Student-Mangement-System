@@ -7,8 +7,8 @@ public class Course {
     String name;
     String teacher;
     String subject;
-    final int maxNumberOfSeats = 50;
-    final double cost = 600;
+    int maxNumberOfSeats = 50;
+    double cost = 600;
 
     /*A class must have a name and subject. A class can not have a teacher. */
 
@@ -25,7 +25,7 @@ public class Course {
         this.subject = subject;
     }
 
-    public Course(){};
+    public Course(){}
 
 
     public String getId() {
@@ -52,9 +52,13 @@ public class Course {
         return maxNumberOfSeats;
     }
 
+    public void setMaxNumberOfSeats(int maxNumberOfSeats) {this.maxNumberOfSeats = maxNumberOfSeats;}
+
     public double getCost() {
         return cost;
     }
+
+    public void setCost(double cost) {this.cost = cost;}
 
     public String getTeacher() {
         return teacher;

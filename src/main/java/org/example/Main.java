@@ -35,10 +35,13 @@ public class Main {
 
         try{
             Connection db = new PostgresSQLDatabase().getConnection();
-
-            CourseService courseService = new CourseService(db);
             StudentService studentService = new StudentService(db);
             EnrollmentService enrollmentService = new EnrollmentService(db);
+            CourseService courseService = new CourseService(db);
+
+            enrollmentService.setStudentService(studentService);
+            courseService.setServices(studentService, enrollmentService);
+            studentService.setServices(enrollmentService, courseService);
 
             // Create table
             courseService.createCoursesTable();
@@ -52,13 +55,6 @@ public class Main {
             courseService.addCourseToTable(math_course);
 
             studentService.addStudentToTable(student);
-
-//            ArrayList<Student> allCourseStudent = courseService.getAllStudentFromCourse(english_course);
-//
-//
-//            for(Student s : allCourseStudent){
-//              System.out.println(s);
-//            }
 
         }catch(SQLException e){
             e.printStackTrace();

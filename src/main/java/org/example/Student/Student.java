@@ -88,13 +88,13 @@ public class Student {
         this.balance = balance;
     }
 
-    public String addStudentToCourse(UUID courseID){
+    public String addCourseToStudent(UUID courseID){
         courses.add(courseID);
 
         return "Successfully added: " + courseID;
     }
 
-    public String addStudentToCourse(ArrayList<UUID> courseIDs){
+    public String addCourseToStudent(ArrayList<UUID> courseIDs){
         courses = courseIDs;
 
         return "Successfully added: " + courseIDs;
