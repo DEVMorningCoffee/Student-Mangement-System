@@ -114,7 +114,6 @@ public class Student {
         courses = courseIDs;
     }
 
-
     @Override
     public String toString() {
         return "Student{" +

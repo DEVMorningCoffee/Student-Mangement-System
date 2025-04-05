@@ -203,4 +203,27 @@ public class StudentService {
         }
     }
 
+    public void addCoursetoStudentTable(Course course, Student student) throws SQLException {
+        String addCourseStudentTable = """
+                SELECT COUNT(*) FROM ENROLLMENTS WHERE COURSEID = ?;
+                """;
+
+        try(PreparedStatement stmt = connection.prepareStatement(addCourseStudentTable)) {
+            stmt.setObject(1, course.getId(), java.sql.Types.OTHER);
+
+            int coursesCount = stmt.executeUpdate();
+
+            if(coursesCount < course.getMaxNumberOfSeats()) {
+                throw new RuntimeException("Course is full");
+            }
+
+            student.addCourseToStudent(UUID.fromString(course.getId()));
+
+            updateStudentFromTable(student);
+            enrollmentService.addEnrollmentToTable(student, course);
+
+        }catch (SQLException e){
+            throw new RuntimeException("Adding course failed", e);
+        }
+    }
 }
