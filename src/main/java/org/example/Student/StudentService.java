@@ -217,6 +217,10 @@ public class StudentService {
                 throw new RuntimeException("Course is full");
             }
 
+            if(course.getCost() > student.getBalance()) {
+                throw new RuntimeException("Student can't afford course");
+            }
+
             student.addCourseToStudent(UUID.fromString(course.getId()));
 
             updateStudentFromTable(student);
