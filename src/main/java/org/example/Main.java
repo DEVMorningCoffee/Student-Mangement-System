@@ -4,6 +4,7 @@ import org.example.Course.Course;
 import org.example.Course.CourseService;
 import org.example.Database.PostgresSQLDatabase;
 import org.example.Enrollment.EnrollmentService;
+import org.example.Input.InputHelper;
 import org.example.Student.Student;
 import org.example.Student.StudentService;
 
@@ -30,9 +31,6 @@ public class Main {
         courses.add(history_course.getIDFromUUID());
         courses.add(english_course.getIDFromUUID());
 
-
-        Student student = new Student("Jeffrey", "Abraham", 21, 600.29);
-
         try{
             Connection db = new PostgresSQLDatabase().getConnection();
             StudentService studentService = new StudentService(db);
@@ -48,13 +46,38 @@ public class Main {
             studentService.createStudentsTable();
             enrollmentService.createEnrollmentsTable();
 
-            // Add to update
-            courseService.addCourseToTable(english_course);
-            courseService.addCourseToTable(science_course);
-            courseService.addCourseToTable(history_course);
-            courseService.addCourseToTable(math_course);
+            while(true){
+                System.out.println();
+                System.out.println();
+                System.out.println();
 
-            studentService.addStudentToTable(student);
+                String[] userChoices = {"Add Student", "Add Course", "Enroll Student", "View Student Info", "Exit"};
+
+                for(int i = 0; i < userChoices.length; i++){
+                    System.out.println(i + 1  + ". " + userChoices[i]);
+                }
+
+                System.out.println();
+
+                int choice = Integer.parseInt(userInput("What's your choice: "));
+
+
+                switch(choice){
+                    case 1:
+                        String studentFirstName = InputHelper.getString("Please enter student first name: ");
+                        String studentLastName = InputHelper.getString("Please enter student last name: ");
+                        int studentAge = InputHelper.getInt("Please enter student age: ");
+                        double studentBalance = InputHelper.getDouble("Please enter student balance: ");
+
+                        Student student = new Student(studentFirstName, studentLastName, studentAge, studentBalance);
+                        studentService.addStudentToTable(student);
+
+                        break;
+
+                }
+
+
+            }
 
         }catch(SQLException e){
             e.printStackTrace();
