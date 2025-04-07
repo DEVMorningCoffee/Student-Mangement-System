@@ -66,6 +66,31 @@ public class CourseService {
         }
     }
 
+    public void addCourseToTable(ArrayList<Course> courseArrayList) throws SQLException{
+        String addCourseToTableSQL = """
+                INSERT INTO Courses (ID, NAME, Teacher, Subject, MaxNumberOfSeats, Cost)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """;
+
+        try(PreparedStatement stmt = connection.prepareStatement(addCourseToTableSQL)){
+
+            for(Course course: courseArrayList){
+                stmt.setObject(1, course.getId(), java.sql.Types.OTHER);
+                stmt.setString(2, course.getName());
+                stmt.setString(3, course.getTeacher());
+                stmt.setString(4, course.getSubject());
+                stmt.setInt(5, course.getMaxNumberOfSeats());
+                stmt.setDouble(6, course.getCost());
+
+                stmt.executeUpdate();
+            }
+
+            System.out.println("Course added");
+        }catch(SQLException e){
+            throw new RuntimeException("Course adding failed",e);
+        }
+    }
+
     public Course getCourseFromTable(String id) throws SQLException {
         String sql = "SELECT * FROM Courses WHERE ID = ?";
 
@@ -89,6 +114,35 @@ public class CourseService {
                 }
             }
         }
+    }
+
+    public ArrayList<Course> getAllCourseFromTable() throws SQLException {
+        String sql = "SELECT * FROM Courses";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            ArrayList<Course> courses = new ArrayList<>();
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while(rs.next()) {
+                        Course course = new Course();
+                        course.setId(rs.getString("ID"));
+                        course.setName(rs.getString("Name"));
+                        course.setTeacher(rs.getString("Teacher"));
+                        course.setSubject(rs.getString("Subject"));
+                        course.setMaxNumberOfSeats(rs.getInt("MaxNumberOfSeats"));
+                        course.setCost(rs.getDouble("Cost"));
+
+                        courses.add(course);
+                }
+                return courses;
+
+            }catch (SQLException e){
+                    throw new RuntimeException("No courses found");
+            }
+
+        }
+
     }
 
     public void updateCourseFromTable(Course course) throws SQLException{
