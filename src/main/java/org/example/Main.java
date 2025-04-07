@@ -25,11 +25,11 @@ public class Main {
         Course history_course = new Course("Ancient Civilization", "History", "Rowan Zimmerman");
         Course english_course = new Course("Reading & Research", "English", "Layla Stephenson");
 
-        ArrayList<UUID> courses = new ArrayList<>();
-        courses.add(math_course.getIDFromUUID());
-        courses.add(science_course.getIDFromUUID());
-        courses.add(history_course.getIDFromUUID());
-        courses.add(english_course.getIDFromUUID());
+        ArrayList<Course> courses = new ArrayList<>();
+        courses.add(math_course);
+        courses.add(science_course);
+        courses.add(history_course);
+        courses.add(english_course);
 
         try{
             Connection db = new PostgresSQLDatabase().getConnection();
@@ -46,6 +46,8 @@ public class Main {
             studentService.createStudentsTable();
             enrollmentService.createEnrollmentsTable();
 
+//            courseService.addCourseToTable(courses);
+
             while(true){
                 System.out.println();
                 System.out.println();
@@ -61,7 +63,6 @@ public class Main {
 
                 int choice = Integer.parseInt(userInput("What's your choice: "));
 
-
                 switch(choice){
                     case 1:
                         String studentFirstName = InputHelper.getString("Please enter student first name: ");
@@ -74,9 +75,26 @@ public class Main {
 
                         break;
 
+
+                    case 2:
+                        ArrayList<Course> courseFromTable = courseService.getAllCourseFromTable();
+
+                        System.out.println("Please pick a course.");
+
+                        for(int i = 0; i < courseFromTable.size(); i++){
+                            System.out.println(i + 1  + ". " + courseFromTable.get(i).getName());
+                        }
+
+                        String studentID = userInput("Please enter student ID: ");
+                        Student student1 = studentService.getStudentFromTable(studentID);
+
+                        int courseChoice = Integer.parseInt(userInput("What's your choice: "));
+                        Course course1 = courseFromTable.get(courseChoice - 1);
+
+                        studentService.addCourseToStudentTable(course1, student1);
+
+                        break;
                 }
-
-
             }
 
         }catch(SQLException e){
