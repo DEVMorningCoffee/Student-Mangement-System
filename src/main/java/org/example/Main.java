@@ -77,6 +77,17 @@ public class Main {
 
 
                     case 2:
+                            String courseName = InputHelper.getString("Please enter course name: ");
+                            String courseTeacher = InputHelper.getString("Please enter course teacher: ");
+                            String courseSubject = InputHelper.getString("Please enter course subject: ");
+
+                            Course course = new Course(courseName, courseTeacher, courseSubject);
+                            courseService.addCourseToTable(course);
+
+                            break;
+
+
+                    case 3:
                         ArrayList<Course> courseFromTable = courseService.getAllCourseFromTable();
 
                         System.out.println("Please pick a course.");
