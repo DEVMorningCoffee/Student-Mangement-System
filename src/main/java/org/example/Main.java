@@ -13,7 +13,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.UUID;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
@@ -46,7 +45,6 @@ public class Main {
             studentService.createStudentsTable();
             enrollmentService.createEnrollmentsTable();
 
-//            courseService.addCourseToTable(courses);
 
             while(true){
                 System.out.println();
@@ -105,6 +103,20 @@ public class Main {
                         studentService.addCourseToStudentTable(course1, student1);
 
                         break;
+
+
+                    case 4:
+                        String getStudentID = userInput("Please enter student ID: ");
+                        Student student2 = studentService.getStudentFromTable(getStudentID);
+
+                        System.out.println(student2.toString());
+
+                        break;
+
+
+                    default:
+                        System.exit(0);
+
                 }
             }
 

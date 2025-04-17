@@ -18,6 +18,7 @@ public class PostgresSQLDatabase {
             if(dbProperties == null){
                 throw new RuntimeException("Unable to load database properties file");
             }
+
             Properties properties = new Properties();
             properties.load(dbProperties);
 
